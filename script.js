@@ -78,9 +78,12 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const workoutDelete = document.querySelector('.workout__btn--delete');
+const workoutEdit = document.querySelector('.workout__btn--edit');
 
 class App {
   #map;
+  markers = L.layerGroup();
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
@@ -94,6 +97,7 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
   }
 
   _getPosition() {
@@ -190,7 +194,7 @@ class App {
     this.#workouts.push(workout);
 
     // Render workout on map as marker
-    this._renderWorkoutMarker(workout, lat, lng);
+    this._renderWorkoutMarker(workout);
 
     // Render workout on list
     this._renderWorkout(workout);
@@ -200,10 +204,14 @@ class App {
 
     // Set local storage to all workouts
     this._setLocalStorage();
+
+    // Delete workout
+    const workoutDelete = document.querySelector('.workout__btn--delete');
+    workoutDelete.addEventListener('click', this._deleteWorkout);
   }
 
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
+    const marker = L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -218,11 +226,21 @@ class App {
         `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
+
+    // Add to layergroup #markers
+    this.markers.addLayer(marker);
   }
+
   _renderWorkout(workout) {
     let html = `
         <li class="workout workout--${workout.type}" data-id="${workout.id}">
+          <div class="workout__row">
           <h2 class="workout__title">${workout.description}</h2>
+          <div class="workout__btnGroup">
+          <div class="workout__btn workout__btn--edit">EDIT</div>
+          <div class="workout__btn workout__btn--delete">DEL</div>
+          </div>
+          </div>
           <div class="workout__details">
             <span class="workout__icon">${
               workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
@@ -267,6 +285,33 @@ class App {
     }
 
     form.insertAdjacentHTML('afterend', html);
+  }
+
+  _deleteMarker(workout) {
+    const matchingMarker = Object.values(this.markers._layers).find(marker => {
+      const { lat, lng } = marker._latlng;
+      const arrayIsEqual = [lat, lng].every((v, i) => v === workout.coords[i]);
+      if (arrayIsEqual) return marker;
+    });
+    this.#map.removeControl(matchingMarker);
+  }
+
+  _deleteWorkout(e) {
+    if (e.target.matches('.workout__btn--delete')) {
+      const workoutEl = e.target.closest('.workout');
+
+      const workoutIndex = this.#workouts.findIndex(
+        el => el.id === workoutEl.dataset.id
+      );
+      // Remove marker
+      this._deleteMarker(this.#workouts[workoutIndex]);
+      // Remove from workouts array
+      this.#workouts.splice(workoutIndex, 1);
+      // Remove from DOM
+      workoutEl.remove();
+      // Remove from local storage
+      this._setLocalStorage();
+    }
   }
 
   _moveToPopup(e) {

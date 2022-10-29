@@ -77,11 +77,32 @@ a:visited {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 0.75rem 1.5rem;
 }
-.workout--running {
-  border-left: 5px solid var(--color-brand--2);
+
+.workout__row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
-.workout--cycling {
-  border-left: 5px solid var(--color-brand--1);
+
+.workout__btnGroup {
+  width: 8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.workout__btn {
+  width: 4rem;
+  margin-left: .25rem;
+  text-align: center;
+  transition: all .1s;
+  outline: 1px solid rgba(238, 238, 238, 0);
+}
+
+.workout__btn:hover {
+  outline: 1px solid rgba(238, 238, 238, 0.473);
+  outline-offset: .2rem;
 }
 
 .workout__title {
@@ -89,6 +110,15 @@ a:visited {
   font-weight: 600;
   grid-column: 1 / -1;
 }
+
+.workout--running {
+  border-left: 5px solid var(--color-brand--2);
+}
+
+.workout--cycling {
+  border-left: 5px solid var(--color-brand--1);
+}
+
 
 .workout__details {
   display: flex;
@@ -215,6 +245,7 @@ a:visited {
 .running-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--2);
 }
+
 .cycling-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--1);
 }
