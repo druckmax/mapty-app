@@ -1,0 +1,23 @@
+{
+  "name": "mapty",
+  "version": "1.0.0",
+  "description": "Simple workout tracking app using geolocation and leaflet API.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druckmax/mapty-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/druckmax/mapty-app/issues"
+  },
+  "homepage": "https://github.com/druckmax/mapty-app#readme",
+  "dependencies": {
+    "leaflet": "^1.9.2"
+  }
+}
